@@ -1,0 +1,31 @@
+version: "3"
+services:
+  app:
+    build: ./app
+    links:
+      - db
+    ports:
+      - "5000:5000"
+
+  db:
+    image: mysql
+    ports:
+      - "3300:3306"
+    environment:
+      MYSQL_DATABASE: classicmodels
+      MYSQL_USER: newuser 
+      MYSQL_PASSWORD: newpassword
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - .:/app
+
+  tests:
+    build: ./app
+    links:
+      - db
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - .:/app
+    command: ["pytest","./app/tests/test.py"]
+    
+
